@@ -1,9 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
-interface IHomeProp {
-  isLoggedIn: boolean;
-  setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
-}
-const Home = ({ isLoggedIn, setIsLoggedIn }: IHomeProp) => (
-  <h1 onClick={() => setIsLoggedIn(false)}>Home {isLoggedIn.toString()}</h1>
-);
+import { isLoggedInVar } from '../apollo';
+
+const Home = () => <h1 onClick={() => isLoggedInVar(false)}>Home</h1>;
 export default Home;
