@@ -7,6 +7,7 @@ import NotFound from './screens/NotFound';
 import { ThemeProvider } from 'styled-components';
 import { darkTheme, GlobalStyles, lightTheme } from './styles';
 import SignUp from './screens/SignUp';
+import routes from './routes';
 
 const App = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -17,11 +18,11 @@ const App = () => {
       <GlobalStyles />
       <Router>
         <Switch>
-          <Route exact path="/">
+          <Route exact path={routes.home}>
             {isLoggedIn ? <Home /> : <Login />}
           </Route>
           {!isLoggedIn ? (
-            <Route path="/sign-up">
+            <Route path={routes.signUp}>
               <SignUp />
             </Route>
           ) : null}
