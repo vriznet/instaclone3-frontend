@@ -4,6 +4,7 @@ import {
   faInstagram,
   faFacebookSquare,
 } from '@fortawesome/free-brands-svg-icons';
+import { Link } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -20,7 +21,7 @@ const Wrapper = styled.div`
 
 const WhiteBox = styled.div`
   background-color: white;
-  border: 1px solid rgb(219, 219, 219);
+  border: 1px solid ${({ theme }) => theme.borderColor};
   width: 100%;
 `;
 
@@ -45,19 +46,6 @@ const TopBox = styled(WhiteBox)`
       flex-direction: column;
       align-items: center;
       margin-bottom: 15px;
-      input {
-        width: 100%;
-        padding: 10px 8px;
-        border-radius: 3px;
-        background-color: #fafafa;
-        border: 1px solid rgb(219, 219, 219);
-        &:not(:last-child) {
-          margin-bottom: 5px;
-        }
-        &::placeholder {
-          font-size: 12px;
-        }
-      }
     }
   }
 `;
@@ -66,13 +54,28 @@ const BottomBox = styled(WhiteBox)`
   padding: 20px 0;
   text-align: center;
   a {
+    margin-left: 5px;
     font-weight: 700;
-    color: #0095f6;
+    color: ${({ theme }) => theme.blue};
+  }
+`;
+
+const TextInput = styled.input`
+  width: 100%;
+  padding: 10px 8px;
+  border-radius: 3px;
+  background-color: ${({ theme }) => theme.bgColor};
+  border: 1px solid ${({ theme }) => theme.borderColor};
+  &:not(:last-child) {
+    margin-bottom: 5px;
+  }
+  &::placeholder {
+    font-size: 12px;
   }
 `;
 
 const SubmitButton = styled.input`
-  background-color: #0095f6;
+  background-color: ${({ theme }) => theme.blue};
   border: none;
   width: 100%;
   color: white;
@@ -94,7 +97,7 @@ const Seperator = styled.div`
   div {
     width: 100%;
     height: 1px;
-    background-color: rgb(219, 219, 219);
+    background-color: ${({ theme }) => theme.borderColor};
   }
   span {
     margin-left: 20px;
@@ -123,9 +126,9 @@ const Login = () => {
             <FontAwesomeIcon icon={faInstagram} size="3x" />
           </div>
           <form>
-            <fieldset className="username_password">
-              <input type="text" placeholder="Username" />
-              <input type="password" placeholder="Password" />
+            <fieldset>
+              <TextInput type="text" placeholder="Username" />
+              <TextInput type="password" placeholder="Password" />
             </fieldset>
             <SubmitButton type="submit" value="Log in" />
           </form>
@@ -140,7 +143,8 @@ const Login = () => {
           </FacebookLogin>
         </TopBox>
         <BottomBox>
-          <span>Don't have an account?</span> <a href="#">Sign up</a>
+          <span>Don't have an account?</span>
+          <Link to="/sign-up">Sign up</Link>
         </BottomBox>
       </Wrapper>
     </Container>
