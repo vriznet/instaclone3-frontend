@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const SeperatorSC = styled.div`
-  margin: 20px 0 30px 0;
+  margin: 20px 0 20px 0;
   color: rgb(150, 150, 150);
   display: flex;
   justify-content: center;
