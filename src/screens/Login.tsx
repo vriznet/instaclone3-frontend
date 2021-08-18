@@ -10,10 +10,12 @@ import BottomBox from '../components/auth/BottomBox';
 import HeaderContainer from '../components/auth/HeaderContainer';
 import FacebookLoginBtn from '../components/auth/FacebookLoginBtn';
 import AuthForm from '../components/auth/AuthForm';
+import PageTitle from '../components/PageTitle';
 
 const Login = () => {
   return (
     <AuthContainer>
+      <PageTitle title="Log in | Instaclone" />
       <FormBox>
         <HeaderContainer>
           <FontAwesomeIcon icon={faInstagram} size="3x" />

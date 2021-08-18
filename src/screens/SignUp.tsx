@@ -12,6 +12,7 @@ import HeaderContainer from '../components/auth/HeaderContainer';
 import { FatText } from '../components/shared';
 import FacebookLoginBtn from '../components/auth/FacebookLoginBtn';
 import AuthForm from '../components/auth/AuthForm';
+import PageTitle from '../components/PageTitle';
 
 const SubTitle = styled.h3`
   margin-top: 12px;
@@ -24,6 +25,7 @@ const SubTitle = styled.h3`
 const SignUp = () => {
   return (
     <AuthContainer>
+      <PageTitle title="Sign up | Instaclone" />
       <FormBox>
         <HeaderContainer>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
