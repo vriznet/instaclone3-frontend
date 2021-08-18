@@ -1,6 +1,13 @@
+import { ChangeEventHandler } from 'react';
 import styled from 'styled-components';
+interface IInputProps {
+  onChange?: ChangeEventHandler;
+  value?: string;
+  type: string;
+  placeholder?: string;
+}
 
-const InputSC = styled.input`
+const Input = styled.input<IInputProps>`
   width: 100%;
   padding: 10px 8px;
   border-radius: 3px;
@@ -13,12 +20,5 @@ const InputSC = styled.input`
     font-size: 12px;
   }
 `;
-
-interface IInputProps {
-  type: string;
-  placeholder: string;
-}
-
-const Input = (props: IInputProps) => <InputSC {...props} />;
 
 export default Input;

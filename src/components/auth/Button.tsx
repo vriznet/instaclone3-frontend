@@ -1,6 +1,10 @@
 import styled from 'styled-components';
+interface IButtonProps {
+  type: string;
+  value?: string;
+}
 
-const ButtonSC = styled.input`
+const Button = styled.input<IButtonProps>`
   background-color: ${({ theme }) => theme.blue};
   border: none;
   width: 100%;
@@ -10,12 +14,5 @@ const ButtonSC = styled.input`
   font-weight: 700;
   font-size: 12px;
 `;
-
-interface IButtonProps {
-  type: string;
-  value?: string;
-}
-
-const Button = (props: IButtonProps) => <ButtonSC {...props} />;
 
 export default Button;
