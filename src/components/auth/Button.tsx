@@ -13,6 +13,7 @@ const Button = styled.input<IButtonProps>`
   border-radius: 3px;
   font-weight: 700;
   font-size: 12px;
+  opacity: ${(props) => (props.disabled ? '0.5' : 1)};
 `;
 
 export default Button;

@@ -1,10 +1,11 @@
 import { ChangeEventHandler } from 'react';
 import styled from 'styled-components';
 interface IInputProps {
-  onChange?: ChangeEventHandler;
   value?: string;
   type: string;
   placeholder?: string;
+  hasError?: boolean;
+  onChange?: ChangeEventHandler;
 }
 
 const Input = styled.input<IInputProps>`
@@ -12,12 +13,17 @@ const Input = styled.input<IInputProps>`
   padding: 10px 8px;
   border-radius: 3px;
   background-color: ${({ theme }) => theme.bgColor};
-  border: 1px solid ${({ theme }) => theme.borderColor};
+  border: 1px solid
+    ${({ theme, hasError }) => (hasError ? 'tomato' : theme.borderColor)};
   &:not(:last-child) {
     margin-bottom: 5px;
   }
   &::placeholder {
     font-size: 12px;
+  }
+  &:focus {
+    outline: none;
+    border-color: rgb(38, 38, 38);
   }
 `;
 
