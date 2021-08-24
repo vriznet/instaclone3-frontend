@@ -16,6 +16,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import FormError from '../components/auth/FormError';
 import { loginInputs } from '../types/input';
+import { gql, useMutation } from '@apollo/client';
+import { logUserIn } from '../apollo';
 
 const validationSchema = yup.object().shape({
   username: yup.string().required().min(5),
@@ -27,12 +29,50 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors, isValid },
+    setError,
+    getValues,
   } = useForm<loginInputs>({
     mode: 'onChange',
     resolver: yupResolver(validationSchema),
   });
 
-  const onSubmit: SubmitHandler<loginInputs> = (data) => console.log(data);
+  const LOGIN_MUTATION = gql`
+    mutation ($username: String!, $password: String!) {
+      login(username: $username, password: $password) {
+        ok
+        token
+        error
+      }
+    }
+  `;
+
+  const onCompleted = ({ login: { ok, error, token } }: any) => {
+    if (!ok) {
+      if (error.includes('User not found')) {
+        return setError('username', { message: error });
+      } else if (error.includes('Incorrect Password')) {
+        return setError('password', { message: error });
+      }
+    }
+    if (token) {
+      logUserIn(token);
+    }
+  };
+
+  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+    onCompleted,
+  });
+
+  const onSubmit: SubmitHandler<loginInputs> = () => {
+    if (loading) return;
+    const { username, password } = getValues();
+    login({
+      variables: {
+        username,
+        password,
+      },
+    });
+  };
 
   return (
     <AuthContainer>
@@ -58,7 +98,11 @@ const Login = () => {
             />
             <FormError message={errors.password?.message} />
           </fieldset>
-          <Button type="submit" value="Log in" disabled={!isValid} />
+          <Button
+            type="submit"
+            value={loading ? 'loading' : 'Log In'}
+            disabled={!isValid || loading}
+          />
         </AuthForm>
         <Seperator />
         <FacebookLoginBtn />
