@@ -5,5 +5,6 @@ export interface loginInputs {
 
 export interface signUpInputs extends loginInputs {
   email: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
 }

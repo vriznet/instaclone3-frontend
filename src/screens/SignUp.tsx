@@ -29,7 +29,8 @@ const SubTitle = styled.h3`
 
 const validationSchema = yup.object().shape({
   email: yup.string().email().required(),
-  fullName: yup.string().required().min(5),
+  firstName: yup.string().required().min(5),
+  lastName: yup.string().required().min(5),
   username: yup.string().required().min(5),
   password: yup.string().required().min(5),
 });
@@ -71,11 +72,18 @@ const SignUp = () => {
             <FormError message={errors.email?.message} />
             <Input
               type="text"
-              {...register('fullName')}
-              placeholder="Full Name"
-              hasError={Boolean(errors?.fullName?.message)}
+              {...register('firstName')}
+              placeholder="First Name"
+              hasError={Boolean(errors?.firstName?.message)}
             />
-            <FormError message={errors.fullName?.message} />
+            <FormError message={errors.firstName?.message} />
+            <Input
+              type="text"
+              {...register('lastName')}
+              placeholder="Last Name"
+              hasError={Boolean(errors?.lastName?.message)}
+            />
+            <FormError message={errors.lastName?.message} />
             <Input
               type="text"
               {...register('username')}
