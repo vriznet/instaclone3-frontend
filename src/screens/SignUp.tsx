@@ -1,3 +1,4 @@
+import { gql, useMutation } from '@apollo/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInstagram } from '@fortawesome/free-brands-svg-icons';
 import routes from '../routes';
@@ -18,6 +19,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { signUpInputs } from '../types/input';
 import FormError from '../components/auth/FormError';
+import { useHistory } from 'react-router';
 
 const SubTitle = styled.h3`
   margin-top: 12px;
@@ -30,22 +32,77 @@ const SubTitle = styled.h3`
 const validationSchema = yup.object().shape({
   email: yup.string().email().required(),
   firstName: yup.string().required().min(5),
-  lastName: yup.string().required().min(5),
+  lastName: yup.string().required().min(2),
   username: yup.string().required().min(5),
   password: yup.string().required().min(5),
 });
 
 const SignUp = () => {
+  const history = useHistory();
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
+    setError,
+    getValues,
   } = useForm<signUpInputs>({
     mode: 'onChange',
     resolver: yupResolver(validationSchema),
   });
 
-  const onSubmit: SubmitHandler<signUpInputs> = (data) => console.log(data);
+  const CREATE_ACCOUNT_MUTATION = gql`
+    mutation (
+      $email: String!
+      $firstName: String!
+      $lastName: String!
+      $username: String!
+      $password: String!
+    ) {
+      createAccount(
+        email: $email
+        firstName: $firstName
+        lastName: $lastName
+        username: $username
+        password: $password
+      ) {
+        ok
+        error
+      }
+    }
+  `;
+
+  const onCompleted = ({ createAccount: { ok, error } }: any) => {
+    if (!ok) {
+      if (error === 'Error: username is already taken.') {
+        return setError('username', { message: error });
+      } else if (error === 'Error: email is already taken.') {
+        return setError('email', { message: error });
+      } else if (error === 'Error: username email is already taken.') {
+        setError('username', { message: 'username is already taken.' });
+        setError('email', { message: 'email is already taken.' });
+        return;
+      }
+    }
+    history.push(routes.home);
+  };
+
+  const [signUp, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
+    onCompleted,
+  });
+
+  const onSubmit: SubmitHandler<signUpInputs> = () => {
+    if (loading) return;
+    const { email, firstName, lastName, username, password } = getValues();
+    signUp({
+      variables: {
+        email,
+        firstName,
+        lastName,
+        username,
+        password,
+      },
+    });
+  };
 
   return (
     <AuthContainer>
@@ -99,7 +156,11 @@ const SignUp = () => {
             />
             <FormError message={errors.password?.message} />
           </fieldset>
-          <Button type="submit" value="Sign up" disabled={!isValid} />
+          <Button
+            type="submit"
+            value={loading ? 'loading' : 'Sign Up'}
+            disabled={!isValid || loading}
+          />
         </AuthForm>
       </FormBox>
       <BottomBox cta="Have an account?" link={routes.home} linkText="Log in" />
