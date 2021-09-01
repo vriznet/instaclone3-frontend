@@ -9,6 +9,7 @@ interface IBottomBoxProps {
 }
 
 const BottomBoxSC = styled(BaseBox)`
+  background-color: ${({ theme }) => theme.bgColor};
   padding: 20px 0;
   text-align: center;
   a {

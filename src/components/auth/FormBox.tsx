@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { BaseBox } from '../shared';
 
 const FormBoxSC = styled(BaseBox)`
+  background-color: ${({ theme }) => theme.bgColor};
   display: flex;
   justify-content: center;
   align-items: center;
