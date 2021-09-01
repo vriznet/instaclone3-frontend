@@ -8,3 +8,9 @@ export interface signUpInputs extends loginInputs {
   firstName: string;
   lastName: string;
 }
+
+export interface LoginLocationState {
+  username?: string;
+  password?: string;
+  message?: string;
+}

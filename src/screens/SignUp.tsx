@@ -72,6 +72,7 @@ const SignUp = () => {
   `;
 
   const onCompleted = ({ createAccount: { ok, error } }: any) => {
+    const { username, password } = getValues();
     if (!ok) {
       if (error === 'Error: username is already taken.') {
         return setError('username', { message: error });
@@ -83,7 +84,11 @@ const SignUp = () => {
         return;
       }
     }
-    history.push(routes.home);
+    history.push(routes.home, {
+      message: 'Account created. Please log in.',
+      username,
+      password,
+    });
   };
 
   const [signUp, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {

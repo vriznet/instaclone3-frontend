@@ -15,9 +15,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import FormError from '../components/auth/FormError';
-import { loginInputs } from '../types/input';
+import { LoginLocationState, loginInputs } from '../types/input';
 import { gql, useMutation } from '@apollo/client';
 import { logUserIn } from '../apollo';
+import { useLocation } from 'react-router';
+import { Notification } from '../components/shared';
 
 const validationSchema = yup.object().shape({
   username: yup.string().required().min(5),
@@ -25,6 +27,8 @@ const validationSchema = yup.object().shape({
 });
 
 const Login = () => {
+  const location = useLocation<LoginLocationState>();
+
   const {
     register,
     handleSubmit,
@@ -34,6 +38,10 @@ const Login = () => {
   } = useForm<loginInputs>({
     mode: 'onChange',
     resolver: yupResolver(validationSchema),
+    defaultValues: {
+      username: location?.state?.username || '',
+      password: location?.state?.password || '',
+    },
   });
 
   const LOGIN_MUTATION = gql`
@@ -81,6 +89,9 @@ const Login = () => {
         <HeaderContainer>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </HeaderContainer>
+        {location?.state?.message ? (
+          <Notification>{location.state.message}</Notification>
+        ) : null}
         <AuthForm onSubmit={handleSubmit(onSubmit)}>
           <fieldset>
             <Input
