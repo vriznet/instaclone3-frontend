@@ -13,6 +13,7 @@ const Input = styled.input<IInputProps>`
   padding: 10px 8px;
   border-radius: 3px;
   background-color: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.fontColor};
   border: 1px solid
     ${({ theme, hasError }) => (hasError ? 'tomato' : theme.borderColor)};
   &:not(:last-child) {
@@ -23,7 +24,7 @@ const Input = styled.input<IInputProps>`
   }
   &:focus {
     outline: none;
-    border-color: rgb(38, 38, 38);
+    border-color: rgb(100, 100, 100);
   }
 `;
 
