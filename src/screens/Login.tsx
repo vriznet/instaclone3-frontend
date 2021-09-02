@@ -20,6 +20,7 @@ import { gql, useMutation } from '@apollo/client';
 import { logUserIn } from '../apollo';
 import { useLocation } from 'react-router';
 import { Notification } from '../components/shared';
+import { login, loginVariables } from '../__generated__/login';
 
 const validationSchema = yup.object().shape({
   username: yup.string().required().min(5),
@@ -45,7 +46,7 @@ const Login = () => {
   });
 
   const LOGIN_MUTATION = gql`
-    mutation ($username: String!, $password: String!) {
+    mutation login($username: String!, $password: String!) {
       login(username: $username, password: $password) {
         ok
         token
@@ -54,27 +55,31 @@ const Login = () => {
     }
   `;
 
-  const onCompleted = ({ login: { ok, error, token } }: any) => {
-    if (!ok) {
-      if (error.includes('User not found')) {
-        return setError('username', { message: error });
-      } else if (error.includes('Incorrect Password')) {
-        return setError('password', { message: error });
-      }
+  const [loginMutation, { loading }] = useMutation<login, loginVariables>(
+    LOGIN_MUTATION,
+    {
+      onCompleted: (data) => {
+        const {
+          login: { ok, error, token },
+        } = data;
+        if (!ok) {
+          if (error?.includes('User not found')) {
+            return setError('username', { message: error });
+          } else if (error?.includes('Incorrect Password')) {
+            return setError('password', { message: error });
+          }
+        }
+        if (token) {
+          logUserIn(token);
+        }
+      },
     }
-    if (token) {
-      logUserIn(token);
-    }
-  };
-
-  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
-    onCompleted,
-  });
+  );
 
   const onSubmit: SubmitHandler<loginInputs> = () => {
     if (loading) return;
     const { username, password } = getValues();
-    login({
+    loginMutation({
       variables: {
         username,
         password,

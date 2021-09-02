@@ -20,6 +20,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { signUpInputs } from '../types/input';
 import FormError from '../components/auth/FormError';
 import { useHistory } from 'react-router';
+import {
+  createAccount,
+  createAccountVariables,
+} from '../__generated__/createAccount';
 
 const SubTitle = styled.h3`
   margin-top: 12px;
@@ -51,7 +55,7 @@ const SignUp = () => {
   });
 
   const CREATE_ACCOUNT_MUTATION = gql`
-    mutation (
+    mutation createAccount(
       $email: String!
       $firstName: String!
       $lastName: String!
@@ -71,34 +75,38 @@ const SignUp = () => {
     }
   `;
 
-  const onCompleted = ({ createAccount: { ok, error } }: any) => {
-    const { username, password } = getValues();
-    if (!ok) {
-      if (error === 'Error: username is already taken.') {
-        return setError('username', { message: error });
-      } else if (error === 'Error: email is already taken.') {
-        return setError('email', { message: error });
-      } else if (error === 'Error: username email is already taken.') {
-        setError('username', { message: 'username is already taken.' });
-        setError('email', { message: 'email is already taken.' });
-        return;
+  const [createAccountMutation, { loading }] = useMutation<
+    createAccount,
+    createAccountVariables
+  >(CREATE_ACCOUNT_MUTATION, {
+    onCompleted: (data) => {
+      const {
+        createAccount: { ok, error },
+      } = data;
+      const { username, password } = getValues();
+      if (!ok) {
+        if (error === 'Error: username is already taken.') {
+          return setError('username', { message: error });
+        } else if (error === 'Error: email is already taken.') {
+          return setError('email', { message: error });
+        } else if (error === 'Error: username email is already taken.') {
+          setError('username', { message: 'username is already taken.' });
+          setError('email', { message: 'email is already taken.' });
+          return;
+        }
       }
-    }
-    history.push(routes.home, {
-      message: 'Account created. Please log in.',
-      username,
-      password,
-    });
-  };
-
-  const [signUp, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
-    onCompleted,
+      history.push(routes.home, {
+        message: 'Account created. Please log in.',
+        username,
+        password,
+      });
+    },
   });
 
   const onSubmit: SubmitHandler<signUpInputs> = () => {
     if (loading) return;
     const { email, firstName, lastName, username, password } = getValues();
-    signUp({
+    createAccountMutation({
       variables: {
         email,
         firstName,
