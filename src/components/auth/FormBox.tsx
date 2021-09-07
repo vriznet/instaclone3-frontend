@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { defaultProps } from '../../types/react-component';
 import { BaseBox } from '../shared';
 
 const FormBoxSC = styled(BaseBox)`
@@ -11,6 +12,8 @@ const FormBoxSC = styled(BaseBox)`
   margin-bottom: 10px;
 `;
 
-const FormBox = ({ children }: any) => <FormBoxSC>{children}</FormBoxSC>;
+const FormBox = ({ children }: defaultProps) => (
+  <FormBoxSC>{children}</FormBoxSC>
+);
 
 export default FormBox;

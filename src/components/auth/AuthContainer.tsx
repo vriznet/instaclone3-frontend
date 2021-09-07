@@ -3,6 +3,7 @@ import { faMoon, faSun } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
 import { darkModeVar, disableDarkMode, enableDarkMode } from '../../apollo';
+import { defaultProps } from '../../types/react-component';
 const Container = styled.div`
   display: flex;
   height: 100vh;
@@ -24,7 +25,7 @@ const DarkModeButton = styled.span`
   cursor: pointer;
 `;
 
-const AuthContainer = ({ children }: any) => {
+const AuthContainer = ({ children }: defaultProps) => {
   const darkMode = useReactiveVar(darkModeVar);
   return (
     <Container>
