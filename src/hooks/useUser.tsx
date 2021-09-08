@@ -7,6 +7,7 @@ const ME_QUERY = gql`
   query me {
     me {
       username
+      avatarURL
     }
   }
 `;
@@ -21,7 +22,7 @@ const useUser = () => {
       logUserOut();
     }
   }, [data]);
-  return;
+  return { data };
 };
 
 export default useUser;
