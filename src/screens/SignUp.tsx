@@ -33,6 +33,10 @@ const SubTitle = styled.h3`
   width: 90%;
 `;
 
+const SignUpCTA = styled(FatText)`
+  color: rgb(142, 142, 142);
+`;
+
 const validationSchema = yup.object().shape({
   email: yup.string().email().required(),
   firstName: yup.string().required().min(5),
@@ -124,9 +128,9 @@ const SignUp = () => {
         <HeaderContainer>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
           <SubTitle>
-            <FatText>
+            <SignUpCTA>
               Sign up to see photos and videos from your friends
-            </FatText>
+            </SignUpCTA>
           </SubTitle>
         </HeaderContainer>
         <FacebookLoginBtn />

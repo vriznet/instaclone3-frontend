@@ -8,7 +8,6 @@ export const BaseBox = styled.div`
 
 export const FatText = styled.span`
   font-weight: 600;
-  color: rgb(142, 142, 142);
 `;
 
 export const Notification = styled.div`
