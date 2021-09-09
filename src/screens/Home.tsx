@@ -8,6 +8,7 @@ import { seeFeed } from '../__generated__/seeFeed';
 import Avatar from '../components/Avatar';
 import { FatText } from '../components/shared';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as faSolidHeart } from '@fortawesome/free-solid-svg-icons';
 import {
   faBookmark,
   faComment,
@@ -29,6 +30,7 @@ const FEED_QUERY = gql`
       comments
       createdAt
       isMine
+      isLiked
     }
   }
 `;
@@ -105,7 +107,11 @@ const Home = () => {
             <PhotoActions>
               <div>
                 <PhotoAction>
-                  <FontAwesomeIcon size={'2x'} icon={faHeart} />
+                  <FontAwesomeIcon
+                    size={'2x'}
+                    style={{ color: photo?.isLiked ? 'tomato' : 'inherit' }}
+                    icon={photo?.isLiked ? faSolidHeart : faHeart}
+                  />
                 </PhotoAction>
                 <PhotoAction>
                   <FontAwesomeIcon size={'2x'} icon={faComment} />
