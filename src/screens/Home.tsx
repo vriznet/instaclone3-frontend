@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/client';
 import { seeFeed } from '../__generated__/seeFeed';
 import Photo from '../components/feed/Photo';
 
-const FEED_QUERY = gql`
+export const FEED_QUERY = gql`
   query seeFeed {
     seeFeed {
       id

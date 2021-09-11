@@ -17,6 +17,7 @@ import {
   toggleLikeVariables,
 } from '../../__generated__/toggleLike';
 import { MouseEventHandler } from 'react';
+import { FEED_QUERY } from '../../screens/Home';
 
 interface IPhotoProps {
   photo: seeFeed_seeFeed | null;
@@ -85,7 +86,9 @@ const Photo = ({ photo }: IPhotoProps) => {
   const [toggleLikeMutation, { loading }] = useMutation<
     toggleLike,
     toggleLikeVariables
-  >(TOGGLE_LIKE_MUTATION);
+  >(TOGGLE_LIKE_MUTATION, {
+    refetchQueries: [{ query: FEED_QUERY }],
+  });
 
   const onClickHandler: MouseEventHandler = (e) => {
     e.preventDefault();
