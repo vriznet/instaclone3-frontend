@@ -17,7 +17,6 @@ import {
   toggleLikeVariables,
 } from '../../__generated__/toggleLike';
 import { MouseEventHandler } from 'react';
-import { FEED_QUERY } from '../../screens/Home';
 
 interface IPhotoProps {
   photo: seeFeed_seeFeed | null;
@@ -87,7 +86,33 @@ const Photo = ({ photo }: IPhotoProps) => {
     toggleLike,
     toggleLikeVariables
   >(TOGGLE_LIKE_MUTATION, {
-    refetchQueries: [{ query: FEED_QUERY }],
+    update: (cache, result) => {
+      const ok = result?.data?.toggleLike?.ok;
+      if (
+        ok &&
+        photo &&
+        photo.likes !== undefined &&
+        photo.likes !== null &&
+        photo.id !== undefined &&
+        photo.id !== null &&
+        photo.isLiked !== undefined &&
+        photo.isLiked !== null
+      ) {
+        cache.writeFragment({
+          id: `Photo:${photo.id}`,
+          fragment: gql`
+            fragment ToggleLikeFragment on Photo {
+              isLiked
+              likes
+            }
+          `,
+          data: {
+            isLiked: !photo.isLiked,
+            likes: photo.isLiked ? photo.likes - 1 : photo.likes + 1,
+          },
+        });
+      }
+    },
   });
 
   const onClickHandler: MouseEventHandler = (e) => {
