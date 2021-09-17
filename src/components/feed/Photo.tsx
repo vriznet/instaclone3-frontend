@@ -17,6 +17,7 @@ import {
   toggleLikeVariables,
 } from '../../__generated__/toggleLike';
 import { MouseEventHandler } from 'react';
+import Comments from './Comments';
 
 interface IPhotoProps {
   photo: seeFeed_seeFeed | null;
@@ -68,8 +69,14 @@ const PhotoAction = styled.div`
 `;
 
 const Likes = styled(FatText)`
-  margin-top: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   display: block;
+`;
+
+const Caption = styled.div`
+  display: flex;
+  gap: 4px;
 `;
 
 const Photo = ({ photo }: IPhotoProps) => {
@@ -156,6 +163,14 @@ const Photo = ({ photo }: IPhotoProps) => {
           </div>
         </PhotoActions>
         <Likes>{photo?.likes === 1 ? '1 like' : `${photo?.likes} likes`}</Likes>
+        <Caption>
+          <FatText>{photo?.user?.username}</FatText>
+          <span>{photo?.caption}</span>
+        </Caption>
+        <Comments
+          commentNumber={photo?.commentNumber}
+          comments={photo?.comments}
+        />
       </PhotoData>
     </PhotoContainer>
   );
