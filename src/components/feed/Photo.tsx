@@ -18,6 +18,7 @@ import {
 } from '../../__generated__/toggleLike';
 import { MouseEventHandler } from 'react';
 import Comments from './Comments';
+import sanitizeHTML from 'sanitize-html';
 
 interface IPhotoProps {
   photo: seeFeed_seeFeed | null;
@@ -75,8 +76,19 @@ const Likes = styled(FatText)`
 `;
 
 const Caption = styled.div`
-  display: flex;
-  gap: 4px;
+  mark {
+    background-color: inherit;
+    color: ${({ theme }) => theme.blue};
+    cursor: pointer;
+  }
+
+  mark:hover {
+    text-decoration: underline;
+  }
+`;
+
+const CaptionText = styled.span`
+  margin-left: 4px;
 `;
 
 const Photo = ({ photo }: IPhotoProps) => {
@@ -134,6 +146,13 @@ const Photo = ({ photo }: IPhotoProps) => {
     }
   };
 
+  const sanitizedCaptionText = sanitizeHTML(
+    photo?.caption?.replace(/#[\w]+/g, '<mark>$&</mark>') as string,
+    {
+      allowedTags: ['mark'],
+    }
+  );
+
   return (
     <PhotoContainer key={photo?.id}>
       <PhotoHeader>
@@ -165,7 +184,11 @@ const Photo = ({ photo }: IPhotoProps) => {
         <Likes>{photo?.likes === 1 ? '1 like' : `${photo?.likes} likes`}</Likes>
         <Caption>
           <FatText>{photo?.user?.username}</FatText>
-          <span>{photo?.caption}</span>
+          <CaptionText
+            dangerouslySetInnerHTML={{
+              __html: sanitizedCaptionText,
+            }}
+          />
         </Caption>
         <Comments
           commentNumber={photo?.commentNumber}
