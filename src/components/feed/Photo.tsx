@@ -16,9 +16,9 @@ import {
   toggleLike,
   toggleLikeVariables,
 } from '../../__generated__/toggleLike';
-import { MouseEventHandler } from 'react';
+import React, { MouseEventHandler } from 'react';
 import Comments from './Comments';
-import sanitizeHTML from 'sanitize-html';
+import { Link } from 'react-router-dom';
 
 interface IPhotoProps {
   photo: seeFeed_seeFeed | null;
@@ -76,13 +76,13 @@ const Likes = styled(FatText)`
 `;
 
 const Caption = styled.div`
-  mark {
+  a {
     background-color: inherit;
     color: ${({ theme }) => theme.blue};
     cursor: pointer;
   }
 
-  mark:hover {
+  a:hover {
     text-decoration: underline;
   }
 `;
@@ -146,13 +146,6 @@ const Photo = ({ photo }: IPhotoProps) => {
     }
   };
 
-  const sanitizedCaptionText = sanitizeHTML(
-    photo?.caption?.replace(/#[\w]+/g, '<mark>$&</mark>') as string,
-    {
-      allowedTags: ['mark'],
-    }
-  );
-
   return (
     <PhotoContainer key={photo?.id}>
       <PhotoHeader>
@@ -184,11 +177,17 @@ const Photo = ({ photo }: IPhotoProps) => {
         <Likes>{photo?.likes === 1 ? '1 like' : `${photo?.likes} likes`}</Likes>
         <Caption>
           <FatText>{photo?.user?.username}</FatText>
-          <CaptionText
-            dangerouslySetInnerHTML={{
-              __html: sanitizedCaptionText,
-            }}
-          />
+          <CaptionText>
+            {photo?.caption?.split(' ').map((word, index) =>
+              /#[\w]+/.test(word) ? (
+                <React.Fragment key={index}>
+                  <Link to={`/hashtags/${word}`}>{word}</Link>{' '}
+                </React.Fragment>
+              ) : (
+                <React.Fragment key={index}>{word} </React.Fragment>
+              )
+            )}
+          </CaptionText>
         </Caption>
         <Comments
           commentNumber={photo?.commentNumber}
