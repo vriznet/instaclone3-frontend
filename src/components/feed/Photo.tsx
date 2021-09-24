@@ -117,17 +117,19 @@ const Photo = ({ photo }: IPhotoProps) => {
         photo.isLiked !== undefined &&
         photo.isLiked !== null
       ) {
-        cache.writeFragment({
-          id: `Photo:${photo.id}`,
-          fragment: gql`
-            fragment ToggleLikeFragment on Photo {
-              isLiked
-              likes
-            }
-          `,
-          data: {
-            isLiked: !photo.isLiked,
-            likes: photo.isLiked ? photo.likes - 1 : photo.likes + 1,
+        const photoId = `Photo:${photo.id}`;
+        cache.modify({
+          id: photoId,
+          fields: {
+            isLiked(prev) {
+              return !prev;
+            },
+            likes(prev) {
+              if (photo.isLiked) {
+                return prev - 1;
+              }
+              return prev + 1;
+            },
           },
         });
       }
