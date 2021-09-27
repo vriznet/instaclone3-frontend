@@ -29,7 +29,7 @@ export interface seeFeed_seeFeed_comments {
 
 export interface seeFeed_seeFeed {
   __typename: "Photo";
-  id: string;
+  id: number;
   user: seeFeed_seeFeed_user | null;
   file: string;
   caption: string | null;

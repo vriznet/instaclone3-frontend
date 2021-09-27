@@ -24,7 +24,8 @@ const Input = styled.input<IInputProps>`
   }
   &:focus {
     outline: none;
-    border-color: rgb(100, 100, 100);
+    border-color: ${({ hasError }) =>
+      hasError ? 'tomato' : 'rgb(100, 100, 100)'};
   }
 `;
 

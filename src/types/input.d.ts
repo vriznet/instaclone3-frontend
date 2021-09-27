@@ -14,3 +14,7 @@ export interface LoginLocationState {
   password?: string;
   message?: string;
 }
+
+export interface commentInput {
+  payload: string;
+}

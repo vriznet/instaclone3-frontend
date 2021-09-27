@@ -16,12 +16,35 @@ import {
   toggleLike,
   toggleLikeVariables,
 } from '../../__generated__/toggleLike';
-import React, { MouseEventHandler } from 'react';
+import React, { ChangeEventHandler, MouseEventHandler, useRef } from 'react';
 import Comments from './Comments';
 import { Link } from 'react-router-dom';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { commentInput } from '../../types/input';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  createComment,
+  createCommentVariables,
+} from '../../__generated__/createComment';
+import FormError from '../auth/FormError';
+import useUser from '../../hooks/useUser';
 
 interface IPhotoProps {
   photo: seeFeed_seeFeed | null;
+}
+
+interface ICommentInputProps {
+  value?: string;
+  type: string;
+  placeholder?: string;
+  hasError?: boolean;
+  onChange?: ChangeEventHandler;
+}
+
+interface ICommentButtonProps {
+  type: string;
+  value?: string;
 }
 
 const PhotoContainer = styled.div`
@@ -91,7 +114,46 @@ const CaptionText = styled.span`
   margin-left: 4px;
 `;
 
+const CommentInputContainer = styled.div`
+  margin-top: 14px;
+`;
+
+const CommentInput = styled.input<ICommentInputProps>`
+  padding: 10px 8px;
+  width: 500px;
+  border-radius: 3px;
+  background-color: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.fontColor};
+  border: 1px solid
+    ${({ theme, hasError }) => (hasError ? 'tomato' : theme.borderColor)};
+  &:not(:last-child) {
+    margin-bottom: 5px;
+  }
+  &::placeholder {
+    font-size: 12px;
+  }
+  &:focus {
+    outline: none;
+    border-color: ${({ hasError }) =>
+      hasError ? 'tomato' : 'rgb(100, 100, 100)'};
+  }
+`;
+
+const CommentButton = styled.input<ICommentButtonProps>`
+  margin-left: 10px;
+  background-color: ${({ theme }) => theme.blue};
+  border: none;
+  color: white;
+  padding: 7px 12px;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 14px;
+  opacity: ${(props) => (props.disabled ? '0.5' : 1)};
+`;
+
 const Photo = ({ photo }: IPhotoProps) => {
+  const commentInputRef = useRef<HTMLInputElement | null>(null);
+
   const TOGGLE_LIKE_MUTATION = gql`
     mutation toggleLike($id: Int!) {
       toggleLike(id: $id) {
@@ -101,7 +163,7 @@ const Photo = ({ photo }: IPhotoProps) => {
     }
   `;
 
-  const [toggleLikeMutation, { loading }] = useMutation<
+  const [toggleLikeMutation, { loading: toggleLikeLoading }] = useMutation<
     toggleLike,
     toggleLikeVariables
   >(TOGGLE_LIKE_MUTATION, {
@@ -136,9 +198,9 @@ const Photo = ({ photo }: IPhotoProps) => {
     },
   });
 
-  const onClickHandler: MouseEventHandler = (e) => {
+  const onLikeClickHandler: MouseEventHandler = (e) => {
     e.preventDefault();
-    if (loading) return;
+    if (toggleLikeLoading) return;
     if (photo?.id) {
       toggleLikeMutation({
         variables: {
@@ -146,6 +208,106 @@ const Photo = ({ photo }: IPhotoProps) => {
         },
       });
     }
+  };
+
+  const validationSchema = yup.object().shape({
+    payload: yup.string().required().min(2),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    setError,
+    getValues,
+  } = useForm<commentInput>({
+    mode: 'onChange',
+    resolver: yupResolver(validationSchema),
+  });
+
+  const { data: userData } = useUser();
+
+  const CREATE_COMMENT_MUTATION = gql`
+    mutation createComment($photoId: Int!, $payload: String!) {
+      createComment(photoId: $photoId, payload: $payload) {
+        ok
+        id
+        error
+      }
+    }
+  `;
+
+  const [createCommentMutation, { loading: createCommentLoading }] =
+    useMutation<createComment, createCommentVariables>(
+      CREATE_COMMENT_MUTATION,
+      {
+        update: (cache, result) => {
+          const ok = result?.data?.createComment?.ok;
+          if (!ok) {
+            const error = result?.data?.createComment?.error;
+            return setError('payload', { message: error || '' });
+          }
+          if (userData?.me) {
+            const { payload } = getValues();
+            const newComment = {
+              __typename: 'Comment',
+              createdAt: Date.now() + '',
+              id: result?.data?.createComment?.id || 0,
+              isMine: true,
+              payload,
+              user: {
+                ...userData.me,
+              },
+            };
+
+            const newCacheComment = cache.writeFragment({
+              fragment: gql`
+                fragment CommentFragment on Comment {
+                  id
+                  user {
+                    username
+                  }
+                  payload
+                  createdAt
+                  isMine
+                }
+              `,
+              data: newComment,
+            });
+
+            cache.modify({
+              id: `Photo:${photo?.id}`,
+              fields: {
+                comments(prev) {
+                  return [...prev, newCacheComment];
+                },
+                commentNumber(prev) {
+                  return prev + 1;
+                },
+              },
+            });
+            if (commentInputRef !== null && commentInputRef !== undefined) {
+              if (
+                commentInputRef.current !== null &&
+                commentInputRef.current !== undefined
+              ) {
+                commentInputRef.current.value = '';
+              }
+            }
+          }
+        },
+      }
+    );
+
+  const onSubmit: SubmitHandler<commentInput> = () => {
+    if (createCommentLoading) return;
+    const { payload } = getValues();
+    createCommentMutation({
+      variables: {
+        photoId: photo?.id ? +photo?.id : 0,
+        payload,
+      },
+    });
   };
 
   return (
@@ -158,7 +320,7 @@ const Photo = ({ photo }: IPhotoProps) => {
       <PhotoData>
         <PhotoActions>
           <div>
-            <PhotoAction onClick={(e) => onClickHandler(e)}>
+            <PhotoAction onClick={(e) => onLikeClickHandler(e)}>
               <FontAwesomeIcon
                 size={'2x'}
                 style={{ color: photo?.isLiked ? 'tomato' : 'inherit' }}
@@ -195,6 +357,25 @@ const Photo = ({ photo }: IPhotoProps) => {
           commentNumber={photo?.commentNumber}
           comments={photo?.comments}
         />
+        <CommentInputContainer>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div>
+              <CommentInput
+                {...register('payload')}
+                type="text"
+                placeholder="Write a comment...."
+                hasError={Boolean(errors?.payload?.message)}
+                ref={commentInputRef}
+              />
+              <CommentButton
+                type="submit"
+                value={createCommentLoading ? 'loading' : 'Send'}
+                disabled={!isValid || createCommentLoading}
+              />
+            </div>
+            <FormError message={errors.payload?.message} />
+          </form>
+        </CommentInputContainer>
       </PhotoData>
     </PhotoContainer>
   );
