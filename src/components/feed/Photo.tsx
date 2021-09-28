@@ -204,7 +204,7 @@ const Photo = ({ photo }: IPhotoProps) => {
     if (photo?.id) {
       toggleLikeMutation({
         variables: {
-          id: +photo.id,
+          id: photo.id,
         },
       });
     }
@@ -356,6 +356,7 @@ const Photo = ({ photo }: IPhotoProps) => {
         <Comments
           commentNumber={photo?.commentNumber}
           comments={photo?.comments}
+          photoId={photo?.id}
         />
         <CommentInputContainer>
           <form onSubmit={handleSubmit(onSubmit)}>

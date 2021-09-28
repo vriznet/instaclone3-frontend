@@ -5,6 +5,7 @@ import Comment from './Comment';
 interface ICommentsProps {
   commentNumber?: number;
   comments: (seeFeed_seeFeed_comments | null)[] | null | undefined;
+  photoId: number | undefined;
 }
 
 const CommentsContainer = styled.div``;
@@ -16,7 +17,7 @@ const CommentNumber = styled.div`
   font-size: 11px;
 `;
 
-const Comments = ({ commentNumber, comments }: ICommentsProps) => {
+const Comments = ({ commentNumber, comments, photoId }: ICommentsProps) => {
   return (
     <CommentsContainer>
       {commentNumber === 0 ? null : (
@@ -26,7 +27,7 @@ const Comments = ({ commentNumber, comments }: ICommentsProps) => {
       )}
 
       {comments?.map((comment: seeFeed_seeFeed_comments | null | undefined) => (
-        <Comment key={comment?.id} comment={comment} />
+        <Comment key={comment?.id} comment={comment} photoId={photoId} />
       ))}
     </CommentsContainer>
   );
