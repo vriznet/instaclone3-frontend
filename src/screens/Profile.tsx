@@ -11,7 +11,6 @@ interface IProfileUrlParams {
 const SEE_PROFILE_QUERY = gql`
   query seeProfile($username: String!) {
     seeProfile(username: $username) {
-      id
       username
       firstName
       lastName
