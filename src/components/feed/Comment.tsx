@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 import { MouseEventHandler } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   deleteComment,
@@ -86,7 +87,9 @@ const Comment = ({ comment, photoId }: ICommentProps) => {
 
   return (
     <CommentContainer key={comment?.id}>
-      <CommentUsername>{comment?.user?.username}</CommentUsername>
+      <Link to={`/users/${comment?.user?.username}`}>
+        <CommentUsername>{comment?.user?.username}</CommentUsername>
+      </Link>
       <CommentPayload>{comment?.payload}</CommentPayload>
       {comment?.isMine ? (
         <DeleteCommentButton onClick={onDeleteClickHandler}>
