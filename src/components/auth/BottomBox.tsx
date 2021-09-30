@@ -12,7 +12,8 @@ const BottomBoxSC = styled(BaseBox)`
   background-color: ${({ theme }) => theme.bgColor};
   padding: 20px 0;
   text-align: center;
-  a {
+  a:link,
+  a:visited {
     margin-left: 5px;
     font-weight: 700;
     color: ${({ theme }) => theme.blue};

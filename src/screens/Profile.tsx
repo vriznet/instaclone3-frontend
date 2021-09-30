@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import gql from 'graphql-tag';
 import { useParams } from 'react-router';
 import styled from 'styled-components';
-import { FatText } from '../components/shared';
+import PageTitle from '../components/PageTitle';
+import { Button, FatText } from '../components/shared';
 import { PHOTO_FRAGMENT } from '../fragments';
 import { seeProfile } from '../__generated__/seeProfile';
 
@@ -60,6 +61,7 @@ const Row = styled.div`
   margin-bottom: 20px;
   font-size: 16px;
   font-weight: 400;
+  display: flex;
 `;
 
 const List = styled.ul`
@@ -118,17 +120,41 @@ const Icon = styled.span`
   }
 `;
 
+const ProfileButton = styled(Button).attrs({
+  as: 'span',
+})`
+  margin-left: 14px;
+  text-align: center;
+  cursor: pointer;
+`;
+
 const Profile = () => {
   const { username } = useParams<IProfileUrlParams>();
 
-  const { data } = useQuery<seeProfile>(SEE_PROFILE_QUERY, {
+  const { data, loading } = useQuery<seeProfile>(SEE_PROFILE_QUERY, {
     variables: {
       username,
     },
   });
 
+  const getButtonToDisplay = (profileData: {
+    isMe: boolean | undefined;
+    isFollowing: boolean | undefined;
+  }) => {
+    if (profileData.isMe) return <ProfileButton>Edit Profile</ProfileButton>;
+    if (profileData.isFollowing) return <ProfileButton>Unfollow</ProfileButton>;
+    else return <ProfileButton>Follow</ProfileButton>;
+  };
+
   return (
     <div>
+      <PageTitle
+        title={
+          loading
+            ? 'Loading...'
+            : `${data?.seeProfile?.username}'s Profile | Instaclone`
+        }
+      />
       <Header>
         {data?.seeProfile?.avatarURL ? (
           <Avatar src={data?.seeProfile?.avatarURL} />
@@ -138,6 +164,7 @@ const Profile = () => {
         <Column>
           <Row>
             <Username>{data?.seeProfile?.username}</Username>
+            {data?.seeProfile ? getButtonToDisplay(data.seeProfile) : null}
           </Row>
           <Row>
             <List>
@@ -163,7 +190,7 @@ const Profile = () => {
       </Header>
       <Grid>
         {data?.seeProfile?.photos?.map((photo) => (
-          <Photo bg={photo?.file}>
+          <Photo key={photo?.id} bg={photo?.file}>
             <Icons>
               <Icon>
                 <FontAwesomeIcon icon={faHeart} />

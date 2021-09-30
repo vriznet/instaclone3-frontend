@@ -4,7 +4,7 @@ import routes from '../routes';
 import AuthContainer from '../components/auth/AuthContainer';
 import FormBox from '../components/auth/FormBox';
 import Input from '../components/auth/Input';
-import Button from '../components/auth/Button';
+import { Button } from '../components/shared';
 import Seperator from '../components/auth/Seperator';
 import BottomBox from '../components/auth/BottomBox';
 import HeaderContainer from '../components/auth/HeaderContainer';
