@@ -38,7 +38,9 @@ const App = () => {
                 </Route>
               ) : null}
               <Route path={routes.users}>
-                <Profile />
+                <Layout>
+                  <Profile />
+                </Layout>
               </Route>
               <Route>
                 <NotFound />

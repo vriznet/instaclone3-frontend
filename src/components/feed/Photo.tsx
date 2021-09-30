@@ -99,7 +99,8 @@ const Likes = styled(FatText)`
 `;
 
 const Caption = styled.div`
-  a {
+  a:link,
+  a:visited {
     background-color: inherit;
     color: ${({ theme }) => theme.blue};
     cursor: pointer;
