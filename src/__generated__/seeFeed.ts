@@ -37,6 +37,7 @@ export interface seeFeed_seeFeed {
   user: seeFeed_seeFeed_user | null;
   caption: string | null;
   comments: (seeFeed_seeFeed_comments | null)[] | null;
+  createdAt: string;
   isMine: boolean;
 }
 
