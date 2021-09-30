@@ -1,6 +1,3 @@
-import { useHistory } from 'react-router';
-import routes from '../routes';
-import { logUserOut } from '../apollo';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
 import { seeFeed } from '../__generated__/seeFeed';
@@ -28,13 +25,6 @@ export const FEED_QUERY = gql`
 `;
 
 const Home = () => {
-  const history = useHistory();
-
-  const logOutHandler = () => {
-    history?.replace(routes.home, null);
-    logUserOut();
-  };
-
   const { data } = useQuery<seeFeed>(FEED_QUERY);
 
   return (
