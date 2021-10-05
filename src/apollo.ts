@@ -11,7 +11,7 @@ const TOKEN = 'TOKEN';
 const DARK_MODE = 'DARK_MODE';
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: 'https://na-instaclone-3.herokuapp.com/graphql/',
   credentials: 'same-origin',
 });
 
